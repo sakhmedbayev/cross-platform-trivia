@@ -18,6 +18,9 @@ const styles = StyleSheet.create({
   slide1: {
     backgroundColor: "rgba(20,20,200,0.3)"
   },
+  answeredSlide1: {
+    backgroundColor: "grey"
+  },
   slide2: {
     backgroundColor: "rgba(20,200,20,0.3)"
   },
@@ -35,13 +38,12 @@ const styles = StyleSheet.create({
 });
 
 type Props = {
-  questionIdx: number;
-  swiperRef: React.MutableRefObject<any>;
+
 };
 
-const Question: React.FC<Props> = ({ questionIdx, swiperRef }) => {
+const Result: React.FC<Props> = () => {
   const { loading, error, data } = useQuery(QUESTIONS_QUERY, {
-    fetchPolicy: "cache-first"
+    fetchPolicy: "cache-only"
   });
 
   if (loading) {
@@ -60,7 +62,7 @@ const Question: React.FC<Props> = ({ questionIdx, swiperRef }) => {
     );
   }
 
-  const question = data.questions.results[questionIdx];
+  
 
   return (
     <View
@@ -85,24 +87,4 @@ const Question: React.FC<Props> = ({ questionIdx, swiperRef }) => {
   );
 };
 
-const QuizScreen = () => {
-  const swiperRef = useRef(null);
-
-  // we are setting dummy array in the following way, because Swiper (react-native-web-swiper)
-  // does not rerender its children on props or state change, however,
-  // individual slides are still updating. It is known issue, see more here:
-  // https://github.com/oxyii/react-native-web-swiper/issues/22
-  const arrayOfQuestions = new Array(10).fill(1);
-
-  return (
-    <View style={styles.container}>
-      <Swiper style={styles.container} ref={swiperRef} controlsEnabled={false}>
-        {arrayOfQuestions.map((_, idx) => {
-          return <Question key={idx} questionIdx={idx} swiperRef={swiperRef} />;
-        })}
-      </Swiper>
-    </View>
-  );
-};
-
-export default QuizScreen;
+export Result 

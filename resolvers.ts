@@ -3,6 +3,19 @@ import QUESTIONS_QUERY from "./graphql/QUERY_QUESTIONS";
 import QUERY_ANSWERS from "./graphql/QUERY_ANSWERS";
 
 export const typeDefs = gql`
+  type Question {
+    category: String
+    type: String
+    difficulty: String
+    question: String
+    correct_answer: String
+    incorrect_answers: [String]
+  }
+
+  type Questions {
+    results: [Question]
+  }
+
   type Answer {
     question: String!
     answer: Boolean!
@@ -26,7 +39,9 @@ export const resolvers = {
     userAnswer: (question, _, { cache }) => {
       const { answers } = cache.readQuery({ query: QUERY_ANSWERS });
 
-      const filterRes = answers.filter(answerItem => answerItem.question === question.question)
+      const filterRes = answers.filter(
+        answerItem => answerItem.question === question.question
+      );
       // console.log('filterRes', filterRes)
       return null;
     }
