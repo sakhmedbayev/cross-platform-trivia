@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import AppNavigator from "./navigation/AppNavigator";
 import { typeDefs, resolvers } from "./resolvers";
+import NavigationService from "./services/NavigationService";
 
 // setup your `RestLink` with your endpoint
 const restLink = new RestLink({
@@ -29,18 +30,29 @@ const restLink = new RestLink({
 
 const cache = new InMemoryCache();
 // setup your client
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link: restLink,
   cache,
   typeDefs,
   resolvers
 });
 
-cache.writeData({
+const writeDataToCache = () => cache.writeData({
   data: {
     answers: []
   }
 });
+
+writeDataToCache()
+
+client.onResetStore(() => {
+  cache.writeData({
+    data: {
+      answers: []
+    }
+  })
+  return null
+})
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -58,7 +70,11 @@ export default function App(props) {
       <ApolloProvider client={client}>
         <View style={styles.container}>
           {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-          <AppNavigator />
+          <AppNavigator
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          />
         </View>
       </ApolloProvider>
     );

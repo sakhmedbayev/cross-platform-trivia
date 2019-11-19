@@ -1,0 +1,26 @@
+type Question {
+  category: String!
+  difficulty: String!
+  question: String!
+  correct_answer: String!
+  userAnswer: Boolean
+}
+
+type Answer {
+  question: String!
+  answer: Boolean!
+}
+
+type Questions {
+  results: [Question!]!
+}
+
+
+type Query {
+  questions: Questions
+  answers: [Answer!]!
+}
+
+type Mutation {
+  addEditAnswer(question: String!, answer: Boolean!): [Answer]
+}

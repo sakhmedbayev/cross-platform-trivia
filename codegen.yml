@@ -1,6 +1,6 @@
 overwrite: true
-schema: "./resolvers.ts"
-documents: "src/**/*.graphql"
+schema: "./schema.graphql"
+documents: graphql/**/*.tsx
 generates:
   src/generated/graphql.tsx:
     plugins:

@@ -3,18 +3,6 @@ import QUESTIONS_QUERY from "./graphql/QUERY_QUESTIONS";
 import QUERY_ANSWERS from "./graphql/QUERY_ANSWERS";
 
 export const typeDefs = gql`
-  type Question {
-    category: String
-    type: String
-    difficulty: String
-    question: String
-    correct_answer: String
-    incorrect_answers: [String]
-  }
-
-  type Questions {
-    results: [Question]
-  }
 
   type Answer {
     question: String!

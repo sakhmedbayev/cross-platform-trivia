@@ -1,128 +1,66 @@
 import React from "react";
-import { Button, Platform, StyleSheet, Text, View } from "react-native";
-import {
-  NavigationTabProp,
-  NavigationBottomTabOptions,
-  NavigationBottomTabScreenComponent
-} from "react-navigation-tabs";
-
-type Params = {};
-
-type ScreenProps = {};
-
-const HomeScreen: NavigationBottomTabScreenComponent<Params, ScreenProps> = ({
-  navigation
-}) => {
-  return (
-    <View style={styles.container}>
-      <View
-        style={[styles.container, styles.contentContainer]}
-      >
-      <View style={styles.welcomeContainer}>
-        <Text>Welcome to the Trivia Challenge</Text>
-
-        <Text>You will be presented with 10 True or False quesﬁons.</Text>
-
-        <Text>Can you score 100%?</Text>
-
-        <Button title="BEGIN" onPress={() => navigation.navigate("Links")} />
-      </View>
-      </View>
-    </View>
-  );
-};
-
-HomeScreen.navigationOptions = {
-  // header: null
-};
+import { Button, StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import { NavigationStackScreenComponent } from "react-navigation-stack";
+import { useQuery } from "@apollo/react-hooks";
+import { QuestionsQuery } from "../src/generated/graphql";
+import QUESTIONS_QUERY from "../graphql/QUERY_QUESTIONS";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff"
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: "rgba(0,0,0,0.4)",
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: "center"
-  },
-  contentContainer: {
-    paddingTop: 30
-  },
   welcomeContainer: {
     alignItems: "center",
     marginTop: 10,
     marginBottom: 20
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: "contain",
-    marginTop: 3,
-    marginLeft: -10
-  },
-  getStartedContainer: {
-    alignItems: "center",
-    marginHorizontal: 50
-  },
-  homeScreenFilename: {
-    marginVertical: 7
-  },
-  codeHighlightText: {
-    color: "rgba(96,100,109, 0.8)"
-  },
-  codeHighlightContainer: {
-    backgroundColor: "rgba(0,0,0,0.05)",
-    borderRadius: 3,
-    paddingHorizontal: 4
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center"
-  },
-  tabBarInfoContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: "black",
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3
-      },
-      android: {
-        elevation: 20
-      }
-    }),
-    alignItems: "center",
-    backgroundColor: "#fbfbfb",
-    paddingVertical: 20
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: "rgba(96,100,109, 1)",
-    textAlign: "center"
-  },
-  navigationFilename: {
-    marginTop: 5
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: "center"
-  },
-  helpLink: {
-    paddingVertical: 15
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: "#2e78b7"
   }
 });
+
+type Params = {};
+type ScreenProps = {};
+
+const HomeScreen: NavigationStackScreenComponent<Params, ScreenProps> = ({
+  navigation
+}) => {
+  const { loading, error, data } = useQuery<QuestionsQuery>(QUESTIONS_QUERY, {
+    fetchPolicy: "no-cache"
+  });
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (error && process.env.NODE_ENV === "development") {
+    return (
+      <View style={styles.container}>
+        <Text>`Error! ${error.message}`</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={[styles.container]}>
+        <View style={styles.welcomeContainer}>
+          <Text>Welcome to the Trivia Challenge</Text>
+
+          <Text>You will be presented with {data.questions.results.length} True or False quesﬁons.</Text>
+
+          <Text>Can you score 100%?</Text>
+
+          <Button
+            title="BEGIN"
+            onPress={() => navigation.navigate("QuizScreen")}
+          />
+        </View>
+      </View>
+    </View>
+  );
+};
 
 export default HomeScreen;
