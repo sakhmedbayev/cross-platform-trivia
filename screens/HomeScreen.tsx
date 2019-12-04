@@ -55,7 +55,9 @@ const HomeScreen: NavigationStackScreenComponent<Params, ScreenProps> = ({
 
           <Button
             title="BEGIN"
-            onPress={() => navigation.navigate("QuizScreen")}
+            onPress={() => navigation.navigate("QuizScreen", {
+              numberOfQuestions: data.questions.results.length
+            })}
           />
         </View>
       </View>
